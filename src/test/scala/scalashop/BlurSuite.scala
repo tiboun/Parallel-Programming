@@ -1,14 +1,12 @@
 package scalashop
 
-import java.util.concurrent._
-import scala.collection._
-import org.scalatest.FunSuite
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import common._
 
 @RunWith(classOf[JUnitRunner])
 class BlurSuite extends FunSuite {
+
   test("boxBlurKernel should correctly handle radius 0") {
     val src = new Img(5, 5)
 

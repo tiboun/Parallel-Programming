@@ -1,5 +1,4 @@
-
-import common._
+import scala.collection.immutable.IndexedSeq
 
 package object scalashop {
 
@@ -33,14 +32,25 @@ package object scalashop {
   /** Image is a two-dimensional matrix of pixel values. */
   class Img(val width: Int, val height: Int, private val data: Array[RGBA]) {
     def this(w: Int, h: Int) = this(w, h, new Array(w * h))
+
     def apply(x: Int, y: Int): RGBA = data(y * width + x)
+
     def update(x: Int, y: Int, c: RGBA): Unit = data(y * width + x) = c
   }
 
   /** Computes the blurred RGBA value of a single pixel of the input image. */
   def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA = {
-    // TODO implement using while loops
-    ???
+    val startX = clamp(x - radius, 0, src.width - 1)
+    val endX = clamp(x + radius, 0, src.width - 1)
+    val startY = clamp(y - radius, 0, src.height - 1)
+    val endY = clamp(y + radius, 0, src.height - 1)
+    val values: IndexedSeq[(Int, Int, Int, Int)] = for {
+      i <- (startX to endX)
+      j <- (startY to endY)
+    } yield (red(src(i, j)), green(src(i, j)), blue(src(i, j)), alpha(src(i, j)))
+    val (totalR, totalG, totalB, totalA): (Int, Int, Int, Int) = values.reduceLeft ((c1, c2) => (c1._1 + c2._1, c1._2 + c2._2, c1._3 + c2._3, c1._4 + c2._4))
+    val nbElement = (endX - startX + 1) * (endY - startY + 1)
+    rgba(totalR / nbElement, totalG / nbElement, totalB / nbElement, totalA / nbElement)
   }
 
 }
